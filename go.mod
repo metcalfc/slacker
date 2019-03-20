@@ -1,1 +1,1 @@
-module github.com/metcalfc/go-slacker
+module github.com/metcalfc/slacker
