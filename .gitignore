@@ -14,4 +14,7 @@
 # Random logs
 *log
 
+# slacker binary
+slacker
+
 dist/*
