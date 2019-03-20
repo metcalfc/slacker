@@ -1,0 +1,67 @@
+project_name: slacker
+
+before:
+  hooks:
+    - make clean
+    - go mod download
+
+env:
+  - GO111MODULE=on
+
+builds:
+  - main: ./main.go
+    binary: slacker
+    env:
+      - CGO_ENABLED=0
+
+archive:
+  replacements:
+    darwin: Darwin
+    linux: Linux
+    windows: Windows
+    386: i386
+    amd64: x86_64
+  format: tar.gz
+
+  # Can be used to change the archive formats for specific GOOSs.
+  # Most common use case is to archive as zip on Windows.
+  # Default is empty.
+  format_overrides:
+    - goos: windows
+      format: zip
+
+  # Additional files/globs you want to add to the archive.
+  # Defaults are any files matching `LICENCE*`, `LICENSE*`,
+  # `README*` and `CHANGELOG*` (case-insensitive).
+  files:
+    - LICENSE*
+    - README*
+    - CHANGELOG*
+
+checksum:
+  name_template: "checksums.txt"
+
+sign:
+  artifacts: checksum
+
+snapshot:
+  name_template: "{{ .Tag }}-next"
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"
+
+dockers:
+  - image_templates:
+      - "metcalfc/slacker:latest"
+      - "metcalfc/slacker:{{ .Tag }}"
+    build_flag_templates:
+      - "--label=org.label-schema.schema-version=1.0"
+      - "--label=org.label-schema.version={{.Version}}"
+      - "--label=org.label-schema.name={{.ProjectName}}"
+    extra_files:
+      - LICENSE
+      - README.md
